@@ -1,0 +1,25 @@
+### Send POST request with json body
+POST http://localhost:8080/login
+Content-Type: application/json
+
+{
+  "login": "byku123",
+  "password": "dupcia"
+}
+
+
+### Send POST request with json body
+POST http://localhost:8080/register
+Content-Type: application/json
+
+{
+  "email": "byk@wp.pl",
+  "login": "byku123",
+  "password": "dupcia"
+}
+
+
+
+### Send GET
+GET http://localhost:8080/hello
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJieWt1MTIzIiwiaWF0IjoxNTE2MjM5MDIyfQ.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c
