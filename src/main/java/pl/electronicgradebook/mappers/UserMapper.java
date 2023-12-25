@@ -15,7 +15,7 @@ public interface UserMapper {
 
     // Dodaj mapowanie ról ręcznie
     default String mapRoles(User user) {
-        return user.getRole();
+        return user.getRole().name();
     }
 
     @Mapping(target = "role", expression = "java(mapRoles(user))") // Użyj ręcznie dodanej logiki

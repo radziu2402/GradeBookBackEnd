@@ -28,8 +28,8 @@ public class Test {
     private final UserAuthenticationProvider userAuthenticationProvider;
 
     @GetMapping("/siema")
-    public String siema() {
-        return "EJ SIEMANO";
+    public ResponseEntity<String> siema() {
+        return ResponseEntity.ok("SIEMANO");
     }
 
     @GetMapping("/esa")

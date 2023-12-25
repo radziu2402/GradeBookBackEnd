@@ -2,6 +2,9 @@ package pl.electronicgradebook.security;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.electronicgradebook.dto.CredentialsDto;
@@ -9,6 +12,7 @@ import pl.electronicgradebook.dto.SignUpDto;
 import pl.electronicgradebook.dto.UserDto;
 import pl.electronicgradebook.exceptions.AppException;
 import pl.electronicgradebook.mappers.UserMapper;
+import pl.electronicgradebook.model.Role;
 import pl.electronicgradebook.model.User;
 import pl.electronicgradebook.repo.UserRepository;
 
@@ -16,7 +20,7 @@ import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
@@ -42,17 +46,16 @@ public class UserService {
         } else {
             User user = userMapper.signUpToUser(userDto);
             user.setPassword(passwordEncoder.encode(userDto.password()));
-            user.setRole("student");
+            user.setRole(Role.STUDENT);
 
             User savedUser = userRepository.save(user);
 
             return userMapper.toUserDtoWithRoles(savedUser);
         }
     }
-
-    public UserDto findByLogin(String login) {
-        User user = userRepository.findByLogin(login)
+    @Override
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return userRepository.findByLogin(username)
                 .orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
-        return userMapper.toUserDtoWithRoles(user);
     }
 }
