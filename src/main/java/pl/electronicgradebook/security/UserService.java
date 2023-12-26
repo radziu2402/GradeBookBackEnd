@@ -1,13 +1,15 @@
 package pl.electronicgradebook.security;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import pl.electronicgradebook.dto.CredentialsDto;
+import pl.electronicgradebook.dto.JwtResultDto;
+import pl.electronicgradebook.dto.LoginTO;
 import pl.electronicgradebook.dto.SignUpDto;
 import pl.electronicgradebook.dto.UserDto;
 import pl.electronicgradebook.exceptions.AppException;
@@ -19,20 +21,24 @@ import pl.electronicgradebook.repo.UserRepository;
 import java.util.Optional;
 
 @Service
-@RequiredArgsConstructor
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final UserMapper userMapper;
 
-    public UserDto login(CredentialsDto credentialsDto) {
-        User user = userRepository.findByLogin(credentialsDto.login())
-                .orElseThrow(() -> new AppException("Unknown user", HttpStatus.NOT_FOUND));
+    private final UserAuthenticationProvider userAuthenticationProvider;
 
-        if (passwordEncoder.matches(credentialsDto.password(), user.getPassword())) {
-            return userMapper.toUserDtoWithRoles(user);
+    public JwtResultDto login(LoginTO credentialsDto) {
+        User user = userRepository.findByLogin(credentialsDto.getLogin())
+                .orElseThrow(() -> new AppException("Unknown user", HttpStatus.BAD_REQUEST));
+
+        if (!credentialsDto.getPassword().equals(user.getPassword())) {
+            return JwtResultDto.builder().success(false).build();
         }
-        throw new AppException("Invalid password", HttpStatus.BAD_REQUEST);
+
+        String token = userAuthenticationProvider.createToken(user);
+        return JwtResultDto.builder().accessToken(token).success(true).build();
     }
 
     public UserDto register(SignUpDto userDto) {

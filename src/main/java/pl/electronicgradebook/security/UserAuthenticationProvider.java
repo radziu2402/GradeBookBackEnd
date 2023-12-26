@@ -14,6 +14,7 @@ import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import pl.electronicgradebook.dto.UserDto;
+import pl.electronicgradebook.model.User;
 
 import java.util.Base64;
 import java.util.Date;
@@ -25,14 +26,14 @@ public class UserAuthenticationProvider {
     @Value("${security.jwt.token.secret-key:secret-key}")
     private String secretKey;
 
-    private final UserService userService;
+//    private final UserService userService;
 
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
-    public String createToken(UserDto user) {
+    public String createToken(User user) {
         Date now = new Date();
         Date validity = new Date(now.getTime() + 24 * 3600000); // 1 hour
 
@@ -42,27 +43,27 @@ public class UserAuthenticationProvider {
                 .withIssuedAt(now)
                 .withExpiresAt(validity)
                 .withClaim("email", user.getEmail())
-//                .withClaim("role", user.getRole())
+                .withClaim("role", user.getRole().toString())
                 .sign(algorithm);
     }
 
-    public Authentication validateTokenStrongly(String token) {
-        try {
-            Algorithm algorithm = Algorithm.HMAC256(secretKey);
-
-            JWTVerifier verifier = JWT.require(algorithm)
-                    .build();
-
-            DecodedJWT decoded = verifier.verify(token);
-            Date now = new Date();
-            if (decoded.getExpiresAt().before(now)) {
-                return null;
-            }
-            UserDetails user = userService.loadUserByUsername(decoded.getSubject());
-
-            return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-        } catch (Exception e) {
-            return null;
-        }
-    }
+//    public Authentication validateTokenStrongly(String token) {
+//        try {
+//            Algorithm algorithm = Algorithm.HMAC256(secretKey);
+//
+//            JWTVerifier verifier = JWT.require(algorithm)
+//                    .build();
+//
+//            DecodedJWT decoded = verifier.verify(token);
+//            Date now = new Date();
+//            if (decoded.getExpiresAt().before(now)) {
+//                return null;
+//            }
+//            UserDetails user = userService.loadUserByUsername(decoded.getSubject());
+//
+//            return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
+//        } catch (Exception e) {
+//            return null;
+//        }
+//    }
 }

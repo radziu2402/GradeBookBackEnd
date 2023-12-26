@@ -11,24 +11,23 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
-@Configuration
-@EnableWebSecurity
-@RequiredArgsConstructor
-public class WebSecurityConfig {
-
-    private final UserAuthenticationProvider userAuthenticationProvider;
-
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http.csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(new JwtAuthFilter(userAuthenticationProvider), BasicAuthenticationFilter.class)
-                .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(HttpMethod.POST, "/login", "/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/siema", "/esa").permitAll()
-                        .anyRequest().authenticated());
-
-        return http.build();
-    }
-
-}
+//@Configuration
+//@EnableWebSecurity
+//@RequiredArgsConstructor
+//public class WebSecurityConfig {
+//
+//    private final UserAuthenticationProvider userAuthenticationProvider;
+//
+//    @Bean
+//    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+//        http.csrf(AbstractHttpConfigurer::disable)
+//                .sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+////                .addFilterBefore(new JwtAuthFilter(userAuthenticationProvider), BasicAuthenticationFilter.class)
+//                .authorizeHttpRequests((requests) -> requests
+//                        .requestMatchers(HttpMethod.POST, "/login", "/register").permitAll()
+//                        .anyRequest().authenticated());
+//
+//        return http.build();
+//    }
+//
+//}
