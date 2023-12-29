@@ -6,16 +6,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import pl.electronicgradebook.dto.SignUpDto;
-import pl.electronicgradebook.dto.UserDto;
 import pl.electronicgradebook.repo.AddressRepository;
 import pl.electronicgradebook.security.UserAuthenticationProvider;
-import pl.electronicgradebook.security.UserService;
+import pl.electronicgradebook.security.UserServiceImpl;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -23,7 +18,7 @@ import java.util.List;
 public class Test {
 
     private final AddressRepository addressRepository;
-    private final UserService userService;
+    private final UserServiceImpl userService;
     private final UserAuthenticationProvider userAuthenticationProvider;
 
     @GetMapping("/siema")

@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import pl.electronicgradebook.dto.LoginTO;
 
-@RequestMapping("api/")
+@RequestMapping("api/v1/")
 public interface AuthApi {
 
     @PostMapping("login")

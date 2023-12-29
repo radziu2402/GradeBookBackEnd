@@ -26,8 +26,6 @@ public class UserAuthenticationProvider {
     @Value("${security.jwt.token.secret-key:secret-key}")
     private String secretKey;
 
-//    private final UserService userService;
-
     @PostConstruct
     protected void init() {
         secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
@@ -47,23 +45,5 @@ public class UserAuthenticationProvider {
                 .sign(algorithm);
     }
 
-//    public Authentication validateTokenStrongly(String token) {
-//        try {
-//            Algorithm algorithm = Algorithm.HMAC256(secretKey);
-//
-//            JWTVerifier verifier = JWT.require(algorithm)
-//                    .build();
-//
-//            DecodedJWT decoded = verifier.verify(token);
-//            Date now = new Date();
-//            if (decoded.getExpiresAt().before(now)) {
-//                return null;
-//            }
-//            UserDetails user = userService.loadUserByUsername(decoded.getSubject());
-//
-//            return new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
-//        } catch (Exception e) {
-//            return null;
-//        }
-//    }
+
 }

@@ -8,13 +8,13 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.electronicgradebook.api.AuthApi;
 import pl.electronicgradebook.dto.JwtResultDto;
 import pl.electronicgradebook.dto.LoginTO;
-import pl.electronicgradebook.security.UserService;
+import pl.electronicgradebook.security.UserServiceImpl;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class AuthController implements AuthApi {
 
-    private final UserService userService;
+    private final UserServiceImpl userService;
 
     @Override
     public ResponseEntity<Object> login(LoginTO loginTO) {
