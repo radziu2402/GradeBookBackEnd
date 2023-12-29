@@ -1,6 +1,7 @@
 package pl.electronicgradebook.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

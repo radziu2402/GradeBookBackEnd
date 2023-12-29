@@ -1,6 +1,7 @@
 package pl.electronicgradebook.security;
 
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -17,4 +18,6 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedHeaders("*") // Dodaj dozwolone nagłówki
                 .allowCredentials(true);
     }
+
+
 }
