@@ -91,6 +91,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
                 return null;
             }
             UserDto user = userService.findUserByLogin(decoded.getSubject());
+            user.setToken(token);
 
             return new UsernamePasswordAuthenticationToken(user, null, null);
         } catch (Exception e) {
