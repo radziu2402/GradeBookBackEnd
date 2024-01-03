@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import pl.electronicgradebook.repo.AddressRepository;
 import pl.electronicgradebook.security.UserAuthenticationProvider;
-import pl.electronicgradebook.security.UserServiceImpl;
+import pl.electronicgradebook.service.UserServiceImpl;
 
 import java.util.List;
 

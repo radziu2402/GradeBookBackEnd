@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import pl.electronicgradebook.api.AuthApi;
 import pl.electronicgradebook.dto.JwtResultDto;
 import pl.electronicgradebook.dto.LoginTO;
-import pl.electronicgradebook.security.UserServiceImpl;
+import pl.electronicgradebook.service.UserServiceImpl;
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))

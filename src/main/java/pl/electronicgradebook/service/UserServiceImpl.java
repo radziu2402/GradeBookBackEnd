@@ -1,21 +1,17 @@
-package pl.electronicgradebook.security;
+package pl.electronicgradebook.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import pl.electronicgradebook.dto.JwtResultDto;
-import pl.electronicgradebook.dto.LoginTO;
-import pl.electronicgradebook.dto.SignUpDto;
-import pl.electronicgradebook.dto.UserDto;
+import pl.electronicgradebook.dto.*;
 import pl.electronicgradebook.exceptions.AppException;
 import pl.electronicgradebook.mappers.UserMapper;
 import pl.electronicgradebook.model.Role;
 import pl.electronicgradebook.model.User;
 import pl.electronicgradebook.repo.UserRepository;
+import pl.electronicgradebook.security.UserAuthenticationProvider;
 
 import java.util.Optional;
 
@@ -32,13 +28,13 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByLogin(credentialsDto.getLogin())
                 .orElseThrow(() -> new AppException("Unknown user", HttpStatus.BAD_REQUEST));
 
-//        if (!credentialsDto.getPassword().equals(user.getPassword())) {
-//            return JwtResultDto.builder().success(false).build();
-//        }
-
-        if (!passwordEncoder.matches(credentialsDto.getPassword(), user.getPassword())) {
+        if (!credentialsDto.getPassword().equals(user.getPassword())) {
             return JwtResultDto.builder().success(false).build();
         }
+
+//        if (!passwordEncoder.matches(user.getPassword(), credentialsDto.getPassword())) {
+//            return JwtResultDto.builder().success(false).build();
+//        }
 
         String token = userAuthenticationProvider.createToken(user);
         return JwtResultDto.builder().accessToken(token).success(true).build();
@@ -49,6 +45,18 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByLogin(login)
                 .orElseThrow(() -> new AppException("Unknown user", HttpStatus.BAD_REQUEST));
         return userMapper.toUserDto(user);
+    }
+
+    @Override
+    public ProfileDataDto getProfileData(UserDto userDto) {
+        // TODO: Factory for every role!
+        return ProfileDataDto.builder()
+                .password("password")
+                .firstName("Ala")
+                .secondName("Yara")
+                .dateOfBirth("1991")
+                .email("testmail@gmail.com")
+                .build();
     }
 
 
