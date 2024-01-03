@@ -531,7 +531,7 @@ USING (id = (SELECT AddressID FROM Student WHERE UsersID = (SELECT ID FROM "user
 CREATE USER anowak_student WITH PASSWORD 'pass';
 GRANT Student TO anowak_student;
 
--- TEACHER -- 
+-- TEACHER --
 CREATE ROLE Teacher;
 
 -- GRANTS
@@ -605,7 +605,7 @@ CREATE POLICY insert_attendance_policy ON Attendance
 CREATE POLICY modify_attendance_policy ON Attendance
     FOR ALL TO Teacher
     USING (lessonsid = (SELECT id
-        FROM Lesson 
+        FROM Lesson
         JOIN Teacher ON Lesson.TeacherUsersID = Teacher.UsersID
         WHERE Lesson.ID = Attendance.LessonsID
         AND Teacher.UsersID = (SELECT UsersID FROM "user" WHERE Login = CURRENT_USER)));
@@ -614,7 +614,7 @@ CREATE POLICY modify_attendance_policy ON Attendance
 CREATE USER tkowalczyk_teacher WITH PASSWORD 'pass';
 GRANT Teacher TO tkowalczyk_teacher;
 
---- ADMIN --- 
+--- ADMIN ---
 CREATE USER jkowalski WITH PASSWORD 'admin';
 ALTER USER jkowalski WITH SUPERUSER;
 

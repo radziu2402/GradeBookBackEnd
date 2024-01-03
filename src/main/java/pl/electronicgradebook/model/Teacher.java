@@ -1,5 +1,6 @@
 package pl.electronicgradebook.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,6 +11,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "teacher")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Teacher {
     @Id
     @Column(name = "usersid", nullable = false)

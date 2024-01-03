@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import pl.electronicgradebook.dto.UserDto;
 
 @RequestMapping("api/v1/")
-public interface TeacherApi {
+public interface StudentApi {
 
-    @GetMapping("students")
-    ResponseEntity<Object> getStudents(@AuthenticationPrincipal UserDto userDto);
+    @GetMapping("grades")
+    ResponseEntity<Object> getGrades(@AuthenticationPrincipal UserDto userDto);
 }

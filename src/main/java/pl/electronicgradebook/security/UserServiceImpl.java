@@ -32,7 +32,11 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findByLogin(credentialsDto.getLogin())
                 .orElseThrow(() -> new AppException("Unknown user", HttpStatus.BAD_REQUEST));
 
-        if (!credentialsDto.getPassword().equals(user.getPassword())) {
+//        if (!credentialsDto.getPassword().equals(user.getPassword())) {
+//            return JwtResultDto.builder().success(false).build();
+//        }
+
+        if (!passwordEncoder.matches(credentialsDto.getPassword(), user.getPassword())) {
             return JwtResultDto.builder().success(false).build();
         }
 

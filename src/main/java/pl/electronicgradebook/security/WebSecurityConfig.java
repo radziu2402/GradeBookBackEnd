@@ -24,8 +24,7 @@ public class WebSecurityConfig {
                 .sessionManagement(customizer -> customizer.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthFilter, BasicAuthenticationFilter.class)
                 .authorizeHttpRequests((requests) -> requests
-                        .requestMatchers(HttpMethod.POST, "/api/v1/login", "/register").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/api/v1/students").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/login").permitAll()
                         .anyRequest().authenticated());
         return http.build();
     }

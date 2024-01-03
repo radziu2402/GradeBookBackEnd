@@ -1,5 +1,7 @@
 package pl.electronicgradebook.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +13,7 @@ import java.time.LocalDate;
 @Setter
 @Entity
 @Table(name = "grade")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Grade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,5 +25,17 @@ public class Grade {
 
     @Column(name = "\"date of modification\"", nullable = false)
     private LocalDate dateOfModification;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "subjectsid", nullable = false)
+    private Subject subjectsid;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "teacherusersid", nullable = false)
+    private Teacher teacherusersid;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "studentusersid", nullable = false)
+    private Student studentusersid;
 
 }

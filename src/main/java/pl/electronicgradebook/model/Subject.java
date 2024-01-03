@@ -1,5 +1,6 @@
 package pl.electronicgradebook.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,6 +9,8 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "subject")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+
 public class Subject {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
