@@ -18,6 +18,18 @@ public class UserController implements UserApi {
     @Override
     public ResponseEntity<Object> getProfileData(UserDto userDto) {
         ProfileDataDto profileData = userService.getProfileData(userDto);
+        if (!profileData.isSuccess()) {
+            ResponseEntity.badRequest();
+        }
         return ResponseEntity.ok(profileData);
+    }
+
+    @Override
+    public ResponseEntity<Object> updateProfileData(UserDto userDto, ProfileDataDto profileDataDto) {
+        ProfileDataDto updatedProfileData = userService.updateProfileData(userDto, profileDataDto);
+        if (!updatedProfileData.isSuccess()) {
+            ResponseEntity.badRequest();
+        }
+        return ResponseEntity.ok(updatedProfileData);
     }
 }

@@ -1,18 +1,24 @@
 package pl.electronicgradebook.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.TypeRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import pl.electronicgradebook.dto.*;
 import pl.electronicgradebook.exceptions.AppException;
+import pl.electronicgradebook.factory.UserDataProducerFactory;
 import pl.electronicgradebook.mappers.UserMapper;
 import pl.electronicgradebook.model.Role;
+import pl.electronicgradebook.model.Student;
 import pl.electronicgradebook.model.User;
+import pl.electronicgradebook.producer.UserDataProducer;
 import pl.electronicgradebook.repo.UserRepository;
 import pl.electronicgradebook.security.UserAuthenticationProvider;
 
+import java.beans.Transient;
 import java.util.Optional;
 
 @Service
@@ -23,6 +29,8 @@ public class UserServiceImpl implements UserService {
     private final UserMapper userMapper;
 
     private final UserAuthenticationProvider userAuthenticationProvider;
+
+    private final UserDataProducerFactory userDataProducerFactory;
 
     public JwtResultDto login(LoginTO credentialsDto) {
         User user = userRepository.findByLogin(credentialsDto.getLogin())
@@ -49,14 +57,24 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public ProfileDataDto getProfileData(UserDto userDto) {
-        // TODO: Factory for every role!
-        return ProfileDataDto.builder()
-                .password("password")
-                .firstName("Ala")
-                .secondName("Yara")
-                .dateOfBirth("1991")
-                .email("testmail@gmail.com")
-                .build();
+        UserDataProducer producer = userDataProducerFactory.get(Role.valueOf(userDto.getRole()));
+        return producer.buildUserData(userDto);
+    }
+
+    @Override
+    @Transactional
+    public ProfileDataDto updateProfileData(UserDto userDto, ProfileDataDto profileDataDto) {
+        Optional<User> userOptional = userRepository.findById(userDto.getId());
+        if (userOptional.isEmpty()) {
+            return ProfileDataDto.builder().success(false).build();
+        }
+        User user = userOptional.get();
+
+        user.setEmail(profileDataDto.getEmail());
+        user.setLogin(profileDataDto.getLogin());
+        user.setPassword(profileDataDto.getPassword());
+        userRepository.save(user);
+        return profileDataDto;
     }
 
 

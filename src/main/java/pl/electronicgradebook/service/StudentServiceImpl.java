@@ -18,17 +18,18 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class StudentServiceImpl {
+public class StudentServiceImpl implements StudentService{
 
     private final GradeRepository gradeRepository;
     private final UserRepository userRepository;
 
+    @Override
     public List<GradeDTO> getGradesByStudentId(UserDto userDto) {
         User user = userRepository.findByLogin(userDto.getLogin())
                 .orElseThrow(() -> new AppException("Unknown user", HttpStatus.BAD_REQUEST));
-        List<Grade> gradesByStudentusersid = gradeRepository.findByStudentusersidId(user.getId());
+        List<Grade> gradesByStudentUsersId = gradeRepository.findByStudentusersidId(user.getId());
 
-        return mapGradesToDTO(gradesByStudentusersid);
+        return mapGradesToDTO(gradesByStudentUsersId);
     }
 
     private List<GradeDTO> mapGradesToDTO(List<Grade> grades) {

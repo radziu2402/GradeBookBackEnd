@@ -12,4 +12,6 @@ public interface UserService {
     UserDto findUserByLogin(String login);
 
     ProfileDataDto getProfileData(UserDto userDto);
+
+    ProfileDataDto updateProfileData(UserDto userDto, ProfileDataDto profileDataDto);
 }

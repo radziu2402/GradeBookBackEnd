@@ -1,5 +1,6 @@
 package pl.electronicgradebook.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,4 +17,7 @@ public class ProfileDataDto {
     private String password;
     private String email;
     private String dateOfBirth;
+
+    @JsonIgnore
+    boolean success;
 }
