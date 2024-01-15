@@ -2,7 +2,6 @@ package pl.electronicgradebook.service;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.annotations.TypeRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,13 +11,11 @@ import pl.electronicgradebook.exceptions.AppException;
 import pl.electronicgradebook.factory.UserDataProducerFactory;
 import pl.electronicgradebook.mappers.UserMapper;
 import pl.electronicgradebook.model.Role;
-import pl.electronicgradebook.model.Student;
 import pl.electronicgradebook.model.User;
 import pl.electronicgradebook.producer.UserDataProducer;
 import pl.electronicgradebook.repo.UserRepository;
 import pl.electronicgradebook.security.UserAuthenticationProvider;
 
-import java.beans.Transient;
 import java.util.Optional;
 
 @Service
@@ -32,7 +29,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserDataProducerFactory userDataProducerFactory;
 
-    public JwtResultDto login(LoginTO credentialsDto) {
+    public JwtResultDto login(LoginDTO credentialsDto) {
         User user = userRepository.findByLogin(credentialsDto.getLogin())
                 .orElseThrow(() -> new AppException("Unknown user", HttpStatus.BAD_REQUEST));
 

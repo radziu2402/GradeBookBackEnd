@@ -3,13 +3,10 @@ package pl.electronicgradebook.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import pl.electronicgradebook.dto.GradeDTO;
-import pl.electronicgradebook.dto.UserDto;
+import pl.electronicgradebook.dto.*;
 import pl.electronicgradebook.exceptions.AppException;
-import pl.electronicgradebook.model.Grade;
-import pl.electronicgradebook.model.User;
-import pl.electronicgradebook.repo.GradeRepository;
-import pl.electronicgradebook.repo.UserRepository;
+import pl.electronicgradebook.model.*;
+import pl.electronicgradebook.repo.*;
 
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -18,10 +15,33 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class StudentServiceImpl implements StudentService{
+public class StudentServiceImpl implements StudentService {
 
     private final GradeRepository gradeRepository;
     private final UserRepository userRepository;
+    private final AttendanceRepository attendanceRepository;
+    private final SubjectsTeacherRepository subjectsTeacherRepository;
+    private final TeacherRepository teacherRepository;
+    private final StudentRepository studentRepository;
+
+    public ClassDTO getStudentClass(UserDto userDto) {
+        User user = userRepository.findByLogin(userDto.getLogin())
+                .orElseThrow(() -> new AppException("Unknown user", HttpStatus.BAD_REQUEST));
+        Student student = studentRepository.findByUser(user);
+        Teacher tutor = teacherRepository.findByClassid(student.getClassid());
+        List<Student> allStudents = studentRepository.findAll();
+        List<Student> inClassStudents = allStudents.stream()
+                .filter(s -> s.getClassid().equals(student.getClassid())).toList();
+        return mapStudentsToDTO(inClassStudents, tutor);
+    }
+
+    @Override
+    public List<SubjectsTeacherDTO> getAllTeachers() {
+        List<SubjectsTeacher> subjectsTeacherList = subjectsTeacherRepository.findAll();
+        List<Teacher> teacherList = teacherRepository.findAll();
+        return mapSubjectsTeachersToDTO(subjectsTeacherList, teacherList);
+    }
+
 
     @Override
     public List<GradeDTO> getGradesByStudentId(UserDto userDto) {
@@ -30,6 +50,67 @@ public class StudentServiceImpl implements StudentService{
         List<Grade> gradesByStudentUsersId = gradeRepository.findByStudentusersidId(user.getId());
 
         return mapGradesToDTO(gradesByStudentUsersId);
+    }
+
+    @Override
+    public List<AttendanceDTO> getAttendancesByStudentId(UserDto userDto) {
+        User user = userRepository.findByLogin(userDto.getLogin())
+                .orElseThrow(() -> new AppException("Unknown user", HttpStatus.BAD_REQUEST));
+        List<Attendance> attendancesByStudentUsersId = attendanceRepository.findByStudentusersidId(user.getId());
+
+        return mapAttendancesToDTO(attendancesByStudentUsersId);
+    }
+
+    private ClassDTO mapStudentsToDTO(List<Student> inClassStudents, Teacher tutor) {
+        return ClassDTO.builder()
+                .tutorFirstName(tutor.getFirstName())
+                .tutorLastName(tutor.getLastName())
+                .academicDegree(tutor.getAcademicDegree())
+                .inClassStudents(inClassStudents.stream()
+                        .map(student -> StudentDto.builder()
+                                .firstName(student.getFirstName())
+                                .lastName(student.getLastName())
+                                .className(student.getClassid().getName())
+                                .build())
+                        .toList()
+                )
+                .build();
+    }
+
+    private List<SubjectsTeacherDTO> mapSubjectsTeachersToDTO(List<SubjectsTeacher> subjectsTeacherList, List<Teacher> teacherList) {
+        return subjectsTeacherList.stream()
+                .map(subjectsTeacher -> SubjectsTeacherDTO.builder()
+                        .subjectName(subjectsTeacher.getSubjectsid().getName())
+                        .teacherFirstName(teacherList.stream()
+                                .filter(teacher -> teacher.getId().equals(subjectsTeacher.getId().getTeacherusersid()))
+                                .findFirst()
+                                .map(Teacher::getFirstName)
+                                .orElse("Brak danych"))
+                        .teacherLastName(teacherList.stream()
+                                .filter(teacher -> teacher.getId().equals(subjectsTeacher.getId().getTeacherusersid()))
+                                .findFirst()
+                                .map(Teacher::getLastName)
+                                .orElse("Brak danych"))
+                        .academicDegree(teacherList.stream()
+                                .filter(teacher -> teacher.getId().equals(subjectsTeacher.getId().getTeacherusersid()))
+                                .findFirst()
+                                .map(Teacher::getAcademicDegree)
+                                .orElse("Brak danych"))
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    private List<AttendanceDTO> mapAttendancesToDTO(List<Attendance> attendances) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return attendances.stream()
+                .map(attendance -> AttendanceDTO.builder()
+                        .date(attendance.getDate().atStartOfDay().atOffset(ZoneOffset.UTC).format(formatter))
+                        .present(attendance.getPresent())
+                        .subjectName(attendance.getLessonsid().getSubjectsid().getName())
+                        .teacherFirstName(attendance.getLessonsid().getTeacherusersid().getFirstName())
+                        .teacherLastName(attendance.getLessonsid().getTeacherusersid().getLastName())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     private List<GradeDTO> mapGradesToDTO(List<Grade> grades) {

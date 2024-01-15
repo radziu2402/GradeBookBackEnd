@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import pl.electronicgradebook.api.AuthApi;
 import pl.electronicgradebook.dto.JwtResultDto;
-import pl.electronicgradebook.dto.LoginTO;
+import pl.electronicgradebook.dto.LoginDTO;
 import pl.electronicgradebook.service.UserServiceImpl;
 
 @RestController
@@ -17,8 +17,8 @@ public class AuthController implements AuthApi {
     private final UserServiceImpl userService;
 
     @Override
-    public ResponseEntity<Object> login(LoginTO loginTO) {
-        JwtResultDto jwtResult = userService.login(loginTO);
+    public ResponseEntity<Object> login(LoginDTO loginDTO) {
+        JwtResultDto jwtResult = userService.login(loginDTO);
 
         if (jwtResult.isSuccess()) {
             return new ResponseEntity<>(jwtResult, HttpStatus.OK);

@@ -11,4 +11,13 @@ public interface StudentApi {
 
     @GetMapping("grades")
     ResponseEntity<Object> getGrades(@AuthenticationPrincipal UserDto userDto);
+
+    @GetMapping("attendances")
+    ResponseEntity<Object> getAttendance(@AuthenticationPrincipal UserDto userDto);
+
+    @GetMapping("teachers")
+    ResponseEntity<Object> getTeachers();
+
+    @GetMapping("myclass")
+    ResponseEntity<Object> getStudentClass(@AuthenticationPrincipal UserDto userDto);
 }
