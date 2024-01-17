@@ -11,6 +11,7 @@ import pl.electronicgradebook.repo.StudentRepository;
 
 import java.util.List;
 
+
 @Service
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class TeacherServiceImpl implements TeacherService {
@@ -19,14 +20,17 @@ public class TeacherServiceImpl implements TeacherService {
 
     @Override
     public TaughtStudentsDto getStudentsLearnedByTeacher(UserDto userDto) {
-        // TODO: ADD logic using @Query or some View
-        List<StudentDto> studentsTaughtByTeacher = studentRepository.findAll().stream().map(this::mapToStudentDto).toList();
+        List<StudentDto> studentsTaughtByTeacher = studentRepository.findStudentsTaughtByTeacher(userDto.getLogin())
+                .stream()
+                .map(this::mapToStudentDto)
+                .toList();
 
         return TaughtStudentsDto.builder().students(studentsTaughtByTeacher).success(true).build();
     }
 
     private StudentDto mapToStudentDto(Student student) {
         return StudentDto.builder()
+                .id(student.getId())
                 .firstName(student.getFirstName())
                 .lastName(student.getLastName())
                 .className(student.getClassid().getName())

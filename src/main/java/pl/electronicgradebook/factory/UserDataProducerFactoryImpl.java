@@ -14,7 +14,6 @@ public class UserDataProducerFactoryImpl implements UserDataProducerFactory {
 
     private final List<UserDataProducer> userDataProducers;
 
-
     @Override
     public UserDataProducer get(Role role) {
         return userDataProducers.stream().filter(producer -> producer.supports(role)).findFirst()
