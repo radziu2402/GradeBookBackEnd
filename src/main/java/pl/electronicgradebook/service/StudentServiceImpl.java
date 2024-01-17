@@ -53,6 +53,15 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public List<GradeDTO> getGradesByStudentId(final UserDto userDto, final Integer studentId) {
+        userRepository.findByLogin(userDto.getLogin())
+                .orElseThrow(() -> new AppException("Unknown user", HttpStatus.BAD_REQUEST));
+
+        List<Grade> gradesByStudentUsersId = gradeRepository.findByStudentusersidId(studentId);
+        return mapGradesToDTO(gradesByStudentUsersId);
+    }
+
+    @Override
     public List<AttendanceDTO> getAttendancesByStudentId(UserDto userDto) {
         User user = userRepository.findByLogin(userDto.getLogin())
                 .orElseThrow(() -> new AppException("Unknown user", HttpStatus.BAD_REQUEST));

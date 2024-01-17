@@ -73,24 +73,4 @@ public class UserServiceImpl implements UserService {
         userRepository.save(user);
         return profileDataDto;
     }
-
-
-    public UserDto register(SignUpDto userDto) {
-        Optional<User> optionalUserByLogin = userRepository.findByLogin(userDto.login());
-        Optional<User> optionalUserByEmail = userRepository.findByEmail(userDto.email());
-
-        if (optionalUserByLogin.isPresent()) {
-            throw new AppException("Account with this login already exists", HttpStatus.BAD_REQUEST);
-        } else if (optionalUserByEmail.isPresent()) {
-            throw new AppException("Account with this email already exists", HttpStatus.BAD_REQUEST);
-        } else {
-            User user = userMapper.signUpToUser(userDto);
-            user.setPassword(passwordEncoder.encode(userDto.password()));
-            user.setRole(Role.STUDENT);
-
-            User savedUser = userRepository.save(user);
-
-            return userMapper.toUserDtoWithRoles(savedUser);
-        }
-    }
 }

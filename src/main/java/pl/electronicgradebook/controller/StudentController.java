@@ -6,10 +6,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import pl.electronicgradebook.api.StudentApi;
-import pl.electronicgradebook.dto.*;
+import pl.electronicgradebook.dto.AttendanceDTO;
+import pl.electronicgradebook.dto.ClassDTO;
+import pl.electronicgradebook.dto.GradeDTO;
+import pl.electronicgradebook.dto.SubjectsTeacherDTO;
+import pl.electronicgradebook.dto.UserDto;
 import pl.electronicgradebook.service.StudentServiceImpl;
 
 import java.util.List;
+
 
 @RestController
 @RequiredArgsConstructor(onConstructor = @__(@Autowired))
@@ -21,6 +26,11 @@ public class StudentController implements StudentApi {
     public ResponseEntity<Object> getGrades(UserDto userDto) {
         List<GradeDTO> gradesByStudentId = studentService.getGradesByStudentId(userDto);
         return new ResponseEntity<>(gradesByStudentId, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Object> getGrades(final UserDto userDto, final Integer studentId) {
+        return new ResponseEntity<>(studentService.getGradesByStudentId(userDto, studentId), HttpStatus.OK);
     }
 
     @Override
