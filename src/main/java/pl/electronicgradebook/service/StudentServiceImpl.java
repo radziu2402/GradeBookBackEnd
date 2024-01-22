@@ -1,16 +1,22 @@
 package pl.electronicgradebook.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.annotations.TypeRegistration;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import pl.electronicgradebook.dto.*;
 import pl.electronicgradebook.exceptions.AppException;
+import pl.electronicgradebook.factory.UserDataProducerFactory;
 import pl.electronicgradebook.model.*;
 import pl.electronicgradebook.repo.*;
 
+import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +30,7 @@ public class StudentServiceImpl implements StudentService {
     private final TeacherRepository teacherRepository;
     private final StudentRepository studentRepository;
 
+    @Override
     public ClassDTO getStudentClass(UserDto userDto) {
         User user = userRepository.findByLogin(userDto.getLogin())
                 .orElseThrow(() -> new AppException("Unknown user", HttpStatus.BAD_REQUEST));
@@ -68,6 +75,33 @@ public class StudentServiceImpl implements StudentService {
         List<Attendance> attendancesByStudentUsersId = attendanceRepository.findByStudentusersidId(user.getId());
 
         return mapAttendancesToDTO(attendancesByStudentUsersId);
+    }
+
+    @Override
+    @Transactional
+    public void deleteGradeById(Integer id) {
+        this.gradeRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public GradeDTO addGrade(final UserDto userDto, final NewGradeDto gradeDto) {
+        userRepository.findByLogin(userDto.getLogin())
+                .orElseThrow(() -> new AppException("Unknown user", HttpStatus.BAD_REQUEST));
+
+        Teacher teacher = teacherRepository.findById(userDto.getId()).get();
+        Student student = studentRepository.findById(gradeDto.getStudentId()).get();
+
+        List<Subject> subjects = subjectsTeacherRepository.findByTeacherUserId(teacher.getId());
+
+        Grade grade = Grade.builder()
+                .gradeValue(gradeDto.getGradeValue())
+                .dateOfModification(LocalDate.now())
+                .studentusersid(student)
+                .subjectsid(subjects.get(0))
+                .teacherusersid(teacher).build();
+
+        return mapGradesToDTO(gradeRepository.save(grade));
     }
 
     private ClassDTO mapStudentsToDTO(List<Student> inClassStudents, Teacher tutor) {
@@ -126,6 +160,7 @@ public class StudentServiceImpl implements StudentService {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return grades.stream()
                 .map(grade -> GradeDTO.builder()
+                        .id(grade.getId())
                         .gradeValue(grade.getGradeValue())
                         .dateOfModification(grade.getDateOfModification().atStartOfDay().atOffset(ZoneOffset.UTC).format(formatter))
                         .subjectName(grade.getSubjectsid().getName())
@@ -133,5 +168,17 @@ public class StudentServiceImpl implements StudentService {
                         .teacherLastName(grade.getTeacherusersid().getLastName())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    private GradeDTO mapGradesToDTO(Grade grade) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return GradeDTO.builder()
+                .id(grade.getId())
+                .gradeValue(grade.getGradeValue())
+                .dateOfModification(grade.getDateOfModification().atStartOfDay().atOffset(ZoneOffset.UTC).format(formatter))
+                .subjectName(grade.getSubjectsid().getName())
+                .teacherFirstName(grade.getTeacherusersid().getFirstName())
+                .teacherLastName(grade.getTeacherusersid().getLastName())
+                .build();
     }
 }

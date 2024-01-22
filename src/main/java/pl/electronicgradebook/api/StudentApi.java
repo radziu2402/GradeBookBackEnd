@@ -2,9 +2,8 @@ package pl.electronicgradebook.api;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
+import pl.electronicgradebook.dto.NewGradeDto;
 import pl.electronicgradebook.dto.UserDto;
 
 
@@ -26,4 +25,10 @@ public interface StudentApi {
 
     @GetMapping("myclass")
     ResponseEntity<Object> getStudentClass(@AuthenticationPrincipal UserDto userDto);
+
+    @DeleteMapping("grades")
+    ResponseEntity<Object> deleteGrade(@AuthenticationPrincipal UserDto userDto, @RequestParam("id") Integer gradeId);
+
+    @PostMapping("grades")
+    ResponseEntity<Object> addGrade(@AuthenticationPrincipal UserDto userDto, @RequestBody NewGradeDto newGradeDto);
 }

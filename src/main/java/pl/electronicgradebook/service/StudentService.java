@@ -11,4 +11,10 @@ public interface StudentService {
     List<GradeDTO> getGradesByStudentId(UserDto userDto, Integer studentId);
     List<AttendanceDTO> getAttendancesByStudentId(UserDto userDto);
 
+
+    // TODO: move to new interface, rename etc.
+    void deleteGradeById(Integer id);
+
+    GradeDTO addGrade(UserDto userDto, NewGradeDto gradeDto);
+
 }
