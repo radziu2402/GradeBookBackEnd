@@ -9,6 +9,7 @@ import pl.electronicgradebook.api.StudentApi;
 import pl.electronicgradebook.dto.AttendanceDTO;
 import pl.electronicgradebook.dto.ClassDTO;
 import pl.electronicgradebook.dto.GradeDTO;
+import pl.electronicgradebook.dto.NewGradeDto;
 import pl.electronicgradebook.dto.SubjectsTeacherDTO;
 import pl.electronicgradebook.dto.UserDto;
 import pl.electronicgradebook.service.StudentServiceImpl;
@@ -49,5 +50,16 @@ public class StudentController implements StudentApi {
     public ResponseEntity<Object> getStudentClass(UserDto userDto) {
         ClassDTO studentClass = studentService.getStudentClass(userDto);
         return new ResponseEntity<>(studentClass, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Object> deleteGrade(UserDto userDto, Integer gradeId) {
+        studentService.deleteGradeById(gradeId);
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Object> addGrade(final UserDto userDto, final NewGradeDto newGradeDto) {
+        return ResponseEntity.ok(studentService.addGrade(userDto, newGradeDto));
     }
 }
