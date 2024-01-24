@@ -13,9 +13,11 @@ public interface StudentRepository extends JpaRepository<Student, Integer> {
 
     Student findByUser(User user);
 
-    @Query( " SELECT s FROM Student s WHERE s.classid.id IN ("
-           + " SELECT c.id FROM Class c"
-           + " JOIN Lesson l ON l.classid.id = c.id"
-           + " WHERE l.teacherusersid.user.login = :login)")
+    @Query("""
+            SELECT s FROM Student s WHERE s.classid.id IN (\s
+            SELECT c.id FROM Class c \s
+            JOIN Lesson l ON l.classid.id = c.id\s
+            WHERE l.teacherusersid.user.login = :login)
+            """)
     List<Student> findStudentsTaughtByTeacher(@Param("login") String teacherLogin);
 }
