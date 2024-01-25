@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @Builder
 public class GradeDTO {
+    private Integer id;
     private BigDecimal gradeValue;
     private String dateOfModification;
     private String subjectName;
